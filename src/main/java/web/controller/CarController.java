@@ -1,29 +1,24 @@
 package web.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import web.model.Car;
 import web.service.CarService;
-import web.service.CarServiseImpl;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 public class CarController {
+
+    private final CarService carService;
+    @Autowired
+    public CarController(CarService carService) {
+        this.carService = carService;
+    }
+
     @GetMapping("/cars")
     public String printCar(@RequestParam(value = "count", required = false, defaultValue = "5") Integer count, Model model) {
-        List<Car> carList = new ArrayList<>();
-        carList.add(new Car("Mazda", 6, "Red"));
-        carList.add(new Car("Audi", 100, "Black"));
-        carList.add(new Car("Lada", 9, "Grey"));
-        carList.add(new Car("Lada", 7, "Blue"));
-        carList.add(new Car("Toyota", 4, "Silver"));
-        CarService carService = new CarServiseImpl();
-        carList = carService.getCarsByCount(carList, count);
-        model.addAttribute("cars", carList);
+        model.addAttribute("cars", carService.getCarsByCount(count));
         return "cars";
     }
 }
@@ -34,3 +29,6 @@ public class CarController {
 //5. Создайте страницу cars.html. Реализуйте создание таблицы с машинами из сервиса с помощью thymeleaf.
 //6. При запросе /cars выводить весь список. При запросе /cars?count=2 должен отобразиться список из 2 машин,
 //при /cars?count=3 - из 3, и тд. При count ≥ 5 выводить весь список машин.
+
+//CarService carService = new CarServiseImpl(); тебе для чего спринг дали? чтоб руками создавать?
+//используй дао подход , инит коллекции в дао , логика в сервис , в контроллере только инжект и вызов методов ,
